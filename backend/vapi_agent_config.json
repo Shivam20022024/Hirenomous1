@@ -1,0 +1,51 @@
+{
+  "name": "Novlantis Screening Agent",
+  "firstMessage": "Hello, this is an automated call from Novlantis regarding a job opportunity. We came across your profile and would like to conduct a short initial screening interview. This will take around 5 to 7 minutes. Is this a good time to continue?",
+  "model": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "systemPrompt": "You are an AI recruiter calling a candidate from Novlantis. \n\nYour goals are to conduct a first-round interview following this structure:\n1. Introduction: Briefly explain the job role based on the context.\n2. Experience: Ask about their professional background.\n3. Technical: Ask one technical question based on the job description.\n4. Problem Solving: Present a short hypothetical problem.\n5. Interest: Ask about their interest in the role and Novlantis.\n\nRules:\n- Ask exactly ONE question at a time.\n- Wait for the candidate's response before proceeding.\n- Keep the tone natural, professional, and friendly.\n- Extract structured data at the end: interest (yes/no), skills (yes/no), availability (yes/no)."
+  },
+  "voice": {
+    "provider": "azure",
+    "voiceId": "en-US-JennyNeural"
+  },
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-2"
+  },
+  "analysisPlan": {
+    "structuredDataPlan": {
+      "enabled": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "interest": {
+            "type": "string",
+            "enum": ["yes", "no", "unknown"]
+          },
+          "skills": {
+            "type": "string",
+            "enum": ["yes", "no", "unknown"]
+          },
+          "availability": {
+            "type": "string",
+            "enum": ["yes", "no", "unknown"]
+          },
+          "sentiment": {
+            "type": "string",
+            "enum": ["positive", "neutral", "negative"]
+          },
+          "emotion": {
+            "type": "string",
+            "description": "Primary emotion detected: confident, nervous, enthusiastic, or hesitant"
+          }
+        },
+        "required": ["interest", "skills", "availability", "sentiment", "emotion"]
+      }
+    }
+  },
+  "server": {
+    "url": "{{PUBLIC_BASE_URL}}/vapi/vapi-webhook"
+  }
+}

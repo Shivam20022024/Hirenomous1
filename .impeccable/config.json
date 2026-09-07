@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "frontend/app/(dashboard)/interviews/[id]/page.tsx"
+        ],
+        "createdAt": "2026-09-07T10:06:11.650Z",
+        "reason": "editorial blockquote-style left accent border on AI-summary prose text, not a sidebar/tab element; pre-existing pattern before this redesign"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "animate-bounce",
+        "createdAt": "2026-09-07T10:06:33.840Z",
+        "reason": "three-dot chat typing/thinking indicator in the AI recruiter test simulator; bounce is the standard, domain-appropriate motion for this pattern, not a decorative tacky bounce; pre-existing before this redesign"
+      }
+    ]
+  }
+}

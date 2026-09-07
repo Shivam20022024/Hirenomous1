@@ -1,0 +1,45 @@
+node_modules/
+.next/
+dist/
+build/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.vscode/
+.idea/
+
+# Build artifacts
+*.tsbuildinfo
+
+# Runtime scratch dirs (resume parsing, TTS output, interview media)
+backend/temp_audio/
+backend/temp_resumes/
+backend/temp/
+backend/recordings/
+backend/media/
+
+# Generated candidate exports — contain PII, regenerated at runtime
+backend/candidates*.xlsx
+backend/candidate_call_results*.xlsx
+backend/interview_*.xlsx
+
+# Local marketing renders
+/marketing/
+
+# Runtime logs
+*.log
+backend/server_8001_*.txt
