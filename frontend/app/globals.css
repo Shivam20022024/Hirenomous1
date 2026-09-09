@@ -55,7 +55,7 @@
   --secondary: oklch(0.96 0.006 230);
   --secondary-foreground: oklch(0.30 0.045 283);
   --muted: oklch(0.955 0.008 230);
-  --muted-foreground: oklch(0.50 0.02 230);
+  --muted-foreground: oklch(0.34 0.035 283);
   --accent: oklch(0.703 0.079 194.5);
   --accent-foreground: oklch(0.28 0.045 283);
   --success: oklch(0.55 0.11 170);
@@ -95,11 +95,39 @@ body { @apply bg-background text-foreground antialiased; font-family: var(--font
 .pin-dot { display: inline-block; width: 11px; height: 11px; border: 1.5px solid currentColor; border-radius: 999px 999px 999px 0; transform: rotate(-45deg); }
 @media (max-width: 640px) { .job-card { min-height: 0; } }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--primary); }
+/* Subtle brand-toned ambient wash for app surfaces (dashboard shell, login, candidate
+   interview flow) — NOT used on the marketing landing page, which has its own solid-color
+   sections. Low-opacity so it never competes with card/table contrast.
+   background-attachment: fixed pins it to the viewport rather than the element's own content
+   box, so it stays fully visible everywhere on the page regardless of scroll position or
+   content height — critical for the dashboard shell, whose <main> scrolls internally while
+   the shell itself stays pinned at 100dvh (a content-sized background would only ever show
+   its first-viewport-height slice). */
+.app-surface {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(60rem 40rem at 10% 0%, color-mix(in oklab, var(--primary) 11%, transparent), transparent 65%),
+    radial-gradient(50rem 38rem at 100% 15%, color-mix(in oklab, var(--accent) 13%, transparent), transparent 65%),
+    radial-gradient(55rem 42rem at 25% 100%, color-mix(in oklab, var(--warning) 9%, transparent), transparent 65%),
+    radial-gradient(45rem 36rem at 90% 100%, color-mix(in oklab, var(--success) 7%, transparent), transparent 65%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 ::selection { background: color-mix(in oklab, var(--accent) 55%, white); color: var(--foreground); }
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+/* Thin-track, rounded-capsule-thumb scrollbar used across the whole app (sidebar nav,
+   scrollable tables, modals, file lists). Firefox uses the native thin variant;
+   WebKit/Chromium approximates the same look via a transparent track and a thumb
+   whose visible width is narrowed by a transparent border + background-clip so it
+   reads as a slim line with a solid pill-shaped grip, while keeping the full track
+   width as the clickable/draggable hit area. */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--primary) 45%, transparent) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: color-mix(in oklab, var(--primary) 45%, transparent); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background-color: color-mix(in oklab, var(--primary) 70%, transparent); }
+::-webkit-scrollbar-corner { background: transparent; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 @layer base { :focus-visible { @apply outline-2 outline-offset-2 outline-ring; } }
 
@@ -116,7 +144,7 @@ button { cursor: pointer; }
   --secondary: oklch(0.27 0.025 283);
   --secondary-foreground: oklch(0.92 0.01 230);
   --muted: oklch(0.25 0.022 283);
-  --muted-foreground: oklch(0.68 0.02 230);
+  --muted-foreground: oklch(0.87 0.015 230);
   --accent: oklch(0.48 0.09 194.5);
   --accent-foreground: oklch(0.97 0.005 230);
   --success: oklch(0.62 0.12 170);
@@ -132,4 +160,38 @@ button { cursor: pointer; }
   --sidebar: oklch(0.21 0.03 283);
   --sidebar-foreground: oklch(0.90 0.01 230);
   --sidebar-border: oklch(0.28 0.022 283);
+}
+
+/* Forces the light-mode token values on a subtree regardless of the ancestor .dark class —
+   used by the marketing landing page, which does not support dark mode. Re-declaring the
+   same custom properties here wins over an inherited .dark ancestor for everything inside. */
+.theme-force-light {
+  color-scheme: light;
+  --background: oklch(0.985 0.003 230);
+  --foreground: oklch(0.28 0.045 283);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.28 0.045 283);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.28 0.045 283);
+  --primary: oklch(0.504 0.087 186.4);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.006 230);
+  --secondary-foreground: oklch(0.30 0.045 283);
+  --muted: oklch(0.955 0.008 230);
+  --muted-foreground: oklch(0.50 0.02 230);
+  --accent: oklch(0.703 0.079 194.5);
+  --accent-foreground: oklch(0.28 0.045 283);
+  --success: oklch(0.55 0.11 170);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.781 0.136 81.7);
+  --warning-foreground: oklch(0.30 0.06 70);
+  --warning-surface: oklch(0.855 0.071 69.8);
+  --warning-text: oklch(0.50 0.14 70);
+  --destructive: oklch(0.58 0.22 25);
+  --border: oklch(0.88 0.012 230);
+  --input: oklch(0.85 0.014 230);
+  --ring: oklch(0.504 0.087 186.4);
+  --sidebar: oklch(0.995 0.002 230);
+  --sidebar-foreground: oklch(0.30 0.045 283);
+  --sidebar-border: oklch(0.90 0.01 230);
 }

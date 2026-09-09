@@ -48,7 +48,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="antialiased">
+      <body className="app-surface antialiased">
         <ThemeProvider>
           <AuthProvider>
             {children}

@@ -349,9 +349,9 @@ export default function DashboardPage() {
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search roles" className="w-28 bg-transparent outline-none placeholder:text-muted-foreground"/>
           </label>
         </div>
-        <div className="mt-5 overflow-x-auto">
+        <div className="mt-5 max-h-[420px] overflow-y-auto overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="border-b border-border text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            <thead className="sticky top-0 z-10 border-b border-border bg-card text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
               <tr>
                 <th className="pb-3">Role</th>
                 <th className="pb-3">Candidates</th>

@@ -4,5 +4,5 @@
  * is the only credential.
  */
 export default function InterviewLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-muted/30">{children}</div>;
+  return <div className="app-surface min-h-screen">{children}</div>;
 }

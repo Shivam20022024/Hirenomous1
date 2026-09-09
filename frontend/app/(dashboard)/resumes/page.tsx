@@ -1,15 +1,36 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Upload, Plus, FileText, X, Check, Loader2, Briefcase, Link2, HardDrive } from 'lucide-react';
+import { Upload, Plus, FileText, X, Check, Loader2, Briefcase, Link2, HardDrive, Building2, Share2, Globe } from 'lucide-react';
 import { fetchApi, API_BASE_URL } from '@/lib/api';
+import { EmptyState } from '@/components/empty-state';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
+const COMING_SOON_SOURCES = {
+  linkedin: {
+    label: 'LinkedIn',
+    icon: Building2,
+    description: 'Importing resumes directly from LinkedIn is coming soon. For now, download the resume from LinkedIn and upload it via Local.',
+  },
+  sharepoint: {
+    label: 'SharePoint',
+    icon: Share2,
+    description: 'Importing resumes directly from SharePoint is coming soon. For now, download the resume from SharePoint and upload it via Local.',
+  },
+  naukri: {
+    label: 'Naukri',
+    icon: Globe,
+    description: 'Importing resumes directly from Naukri is coming soon. For now, download the resume from Naukri and upload it via Local.',
+  },
+} as const;
 
 export default function ResumesPage() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'manual'>('upload');
 
   // Upload State
-  const [uploadSource, setUploadSource] = useState<'computer' | 'drive'>('computer');
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadSource, setUploadSource] = useState<'local' | 'drive' | 'linkedin' | 'sharepoint' | 'naukri'>('local');
   const [files, setFiles] = useState<File[]>([]);
   const [driveLinks, setDriveLinks] = useState<string[]>([]);
   const [driveLinkInput, setDriveLinkInput] = useState('');
@@ -201,7 +222,7 @@ export default function ResumesPage() {
       <div className="flex w-full sm:w-fit rounded-lg bg-muted p-1">
         <button
           type="button"
-          onClick={() => { setActiveTab('upload'); setError(''); setSuccess(''); }}
+          onClick={() => { setActiveTab('upload'); setError(''); setSuccess(''); setUploadModalOpen(true); }}
           className={`flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-md px-6 py-2.5 text-sm font-bold transition-all duration-200 ${activeTab === 'upload' ? 'bg-primary text-primary-foreground shadow-md shadow-primary/30' : 'text-muted-foreground hover:text-foreground'}`}
         >
           <Upload size={16} /> Upload Resume
@@ -305,155 +326,189 @@ export default function ResumesPage() {
               {/* Right Column: Upload Area */}
               <div className="flex flex-col gap-6">
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex-1 flex flex-col">
-                  <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
-                    <div>
-                      <h2 className="text-base font-semibold text-foreground">Upload Resumes</h2>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {uploadSource === 'computer' ? 'Drag & drop candidate resumes.' : 'Import resumes from Google Drive links.'}
-                      </p>
-                    </div>
-                    <div className="flex rounded-lg bg-muted p-1">
-                      <button
-                        type="button"
-                        onClick={() => setUploadSource('computer')}
-                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-black transition-colors ${uploadSource === 'computer' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
-                      >
-                        <HardDrive size={13} /> Computer
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setUploadSource('drive')}
-                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-black transition-colors ${uploadSource === 'drive' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
-                      >
-                        <Link2 size={13} /> Google Drive
-                      </button>
-                    </div>
+                  <div className="mb-4">
+                    <h2 className="text-base font-semibold text-foreground">Upload Resumes</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Add candidate resumes from your computer, or import from a connected source.</p>
                   </div>
 
-                  {uploadSource === 'computer' ? (
-                    <>
-                      {/* 5. Dropzone */}
-                      <label className={`relative flex flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all hover:bg-primary/5 ${files.length === 0 ? 'border-primary/40 bg-primary/5 py-12' : 'border-border bg-muted/20 py-8'} px-6 text-center group`}
-                      >
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          multiple
-                          className="sr-only"
-                          onChange={e => {
-                             const newFiles = Array.from(e.target.files || []);
-                             setFiles(prev => [...prev, ...newFiles]);
-                          }}
-                          accept=".pdf,.docx,.doc"
-                        />
+                  {/* 5. Trigger — opens the upload dialog */}
+                  <button
+                    type="button"
+                    onClick={() => setUploadModalOpen(true)}
+                    className="group flex flex-1 min-h-[180px] flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-10 text-center transition-all hover:bg-primary/10"
+                  >
+                    <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-transform group-hover:scale-110">
+                      <Upload className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-bold text-foreground">Upload Resume</h3>
+                    <p className="mt-1 max-w-xs text-xs text-muted-foreground">Choose a file from your computer, or import from LinkedIn, SharePoint, Naukri, or Google Drive</p>
+                  </button>
 
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 mb-4 group-hover:scale-110 transition-transform">
-                          <Upload className="h-6 w-6 text-primary" />
-                        </div>
-                        <h3 className="text-sm font-bold text-foreground">Drop your resumes here</h3>
-                        <p className="mt-1 text-xs text-muted-foreground">or click to browse files from your computer</p>
-                        <div className="mt-6 flex items-center justify-center rounded-lg bg-background border border-border px-5 py-2 text-xs font-semibold shadow-sm group-hover:border-primary/30 transition-colors">
-                          Browse Files
-                        </div>
-                        <p className="mt-5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">PDF, DOCX • Up to 10 MB per file</p>
-                      </label>
-
-                      {/* File List */}
-                      {files.length > 0 && (
-                        <div className="mt-6 flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-1">
-                          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                            <span>{files.length} file{files.length !== 1 ? 's' : ''} selected</span>
-                            <button type="button" onClick={() => setFiles([])} className="text-destructive hover:underline normal-case tracking-normal">Clear all</button>
-                          </div>
-                          {files.map((file, idx) => (
-                            <div key={idx} className="flex items-center justify-between rounded-xl border border-border bg-background p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-colors hover:border-border/80">
-                              <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                  <FileText size={16} />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="truncate text-sm font-semibold text-foreground">{file.name}</p>
-                                  <p className="text-xs font-medium text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setFiles(files.filter((_, i) => i !== idx));
-                                }}
-                                className="ml-4 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                              >
-                                <X size={16} />
-                              </button>
+                  {/* Selected files / links */}
+                  {(files.length > 0 || driveLinks.length > 0) && (
+                    <div className="mt-6 flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-1">
+                      <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+                        <span>{files.length + driveLinks.length} item{files.length + driveLinks.length !== 1 ? 's' : ''} selected</span>
+                        <button type="button" onClick={() => { setFiles([]); setDriveLinks([]); }} className="text-destructive hover:underline normal-case tracking-normal">Clear all</button>
+                      </div>
+                      {files.map((file, idx) => (
+                        <div key={`file-${idx}`} className="flex items-center justify-between rounded-xl border border-border bg-background p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-colors hover:border-border/80">
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                              <FileText size={16} />
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {/* Google Drive link import */}
-                      <div className="flex-1 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-12 text-center">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 mb-4">
-                          <Link2 className="h-6 w-6 text-primary" />
-                        </div>
-                        <h3 className="text-sm font-bold text-foreground">Import from Google Drive</h3>
-                        <p className="mt-1 text-xs text-muted-foreground max-w-xs">Paste a shareable link to a resume file, or an entire folder of resumes. Sharing must be set to "Anyone with the link can view".</p>
-
-                        <div className="mt-6 flex w-full max-w-sm items-center gap-2">
-                          <input
-                            type="url"
-                            value={driveLinkInput}
-                            onChange={e => { setDriveLinkInput(e.target.value); setDriveLinkError(''); }}
-                            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddDriveLink(); } }}
-                            placeholder="https://drive.google.com/file/d/..."
-                            className="h-11 flex-1 rounded-xl border border-border bg-background px-3.5 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-                          />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-semibold text-foreground">{file.name}</p>
+                              <p className="text-xs font-medium text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                          </div>
                           <button
                             type="button"
-                            onClick={handleAddDriveLink}
-                            className="flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setFiles(files.filter((_, i) => i !== idx));
+                            }}
+                            className="ml-4 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                           >
-                            Add
+                            <X size={16} />
                           </button>
                         </div>
-                        {driveLinkError && <p className="mt-2 text-xs font-medium text-destructive">{driveLinkError}</p>}
-                        <p className="mt-5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">PDF, DOCX • File or folder link</p>
-                      </div>
-
-                      {/* Drive Link List */}
-                      {driveLinks.length > 0 && (
-                        <div className="mt-6 flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-1">
-                          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                            <span>{driveLinks.length} link{driveLinks.length !== 1 ? 's' : ''} added</span>
-                            <button type="button" onClick={() => setDriveLinks([])} className="text-destructive hover:underline normal-case tracking-normal">Clear all</button>
-                          </div>
-                          {driveLinks.map((link, idx) => (
-                            <div key={idx} className="flex items-center justify-between rounded-xl border border-border bg-background p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-colors hover:border-border/80">
-                              <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                  <Link2 size={16} />
-                                </div>
-                                <p className="truncate text-sm font-semibold text-foreground">{link}</p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setDriveLinks(prev => prev.filter((_, i) => i !== idx))}
-                                className="ml-4 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                              >
-                                <X size={16} />
-                              </button>
+                      ))}
+                      {driveLinks.map((link, idx) => (
+                        <div key={`link-${idx}`} className="flex items-center justify-between rounded-xl border border-border bg-background p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-colors hover:border-border/80">
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                              <Link2 size={16} />
                             </div>
-                          ))}
+                            <p className="truncate text-sm font-semibold text-foreground">{link}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setDriveLinks(prev => prev.filter((_, i) => i !== idx))}
+                            className="ml-4 shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                          >
+                            <X size={16} />
+                          </button>
                         </div>
-                      )}
-                    </>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* Upload source dialog */}
+            <Dialog open={uploadModalOpen} onOpenChange={setUploadModalOpen}>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Upload new resume</DialogTitle>
+                  <DialogDescription>
+                    {uploadSource === 'local' && 'Select resume files from your computer.'}
+                    {uploadSource === 'drive' && 'Import resumes from a Google Drive link.'}
+                    {uploadSource in COMING_SOON_SOURCES && `Import resumes from ${COMING_SOON_SOURCES[uploadSource as keyof typeof COMING_SOON_SOURCES].label}.`}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="mb-5 flex flex-wrap gap-1 rounded-lg bg-muted p-1">
+                  <button
+                    type="button"
+                    onClick={() => setUploadSource('local')}
+                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-black transition-colors ${uploadSource === 'local' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
+                  >
+                    <HardDrive size={13} /> Local
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUploadSource('drive')}
+                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-black transition-colors ${uploadSource === 'drive' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
+                  >
+                    <Link2 size={13} /> Google Drive
+                  </button>
+                  {(Object.entries(COMING_SOON_SOURCES) as [keyof typeof COMING_SOON_SOURCES, typeof COMING_SOON_SOURCES[keyof typeof COMING_SOON_SOURCES]][]).map(([key, src]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setUploadSource(key)}
+                      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-black transition-colors ${uploadSource === key ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
+                    >
+                      <src.icon size={13} /> {src.label}
+                    </button>
+                  ))}
+                </div>
+
+                {uploadSource === 'local' ? (
+                  <label className="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-10 text-center transition-all hover:bg-primary/10">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      className="sr-only"
+                      onChange={e => {
+                        const newFiles = Array.from(e.target.files || []);
+                        if (newFiles.length > 0) {
+                          setFiles(prev => [...prev, ...newFiles]);
+                          setUploadModalOpen(false);
+                        }
+                      }}
+                      accept=".pdf,.docx,.doc"
+                    />
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-transform group-hover:scale-110">
+                      <Upload className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-bold text-foreground">Drop file here</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">or</p>
+                    <div className="mt-3 flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-colors group-hover:opacity-90">
+                      Select file to upload
+                    </div>
+                    <p className="mt-5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">PDF, DOCX • Up to 10 MB per file</p>
+                  </label>
+                ) : uploadSource === 'drive' ? (
+                  <div className="flex flex-col items-center rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-10 text-center">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                      <Link2 className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-bold text-foreground">Import from Google Drive</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">Paste a shareable link to a resume file, or an entire folder. Sharing must be set to "Anyone with the link can view".</p>
+
+                    <div className="mt-6 flex w-full items-center gap-2">
+                      <input
+                        type="url"
+                        value={driveLinkInput}
+                        onChange={e => { setDriveLinkInput(e.target.value); setDriveLinkError(''); }}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddDriveLink(); } }}
+                        placeholder="https://drive.google.com/file/d/..."
+                        className="h-11 flex-1 rounded-xl border border-border bg-background px-3.5 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddDriveLink}
+                        className="flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    {driveLinkError && <p className="mt-2 text-xs font-medium text-destructive">{driveLinkError}</p>}
+                    <p className="mt-5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">PDF, DOCX • File or folder link</p>
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={(() => { const Icon = COMING_SOON_SOURCES[uploadSource].icon; return <Icon size={22} />; })()}
+                    title={`${COMING_SOON_SOURCES[uploadSource].label} import is coming soon`}
+                    description={COMING_SOON_SOURCES[uploadSource].description}
+                    action={
+                      <button
+                        type="button"
+                        onClick={() => setUploadSource('local')}
+                        className="mt-1 rounded-lg border border-border bg-card px-4 py-2 text-xs font-semibold shadow-sm hover:bg-muted transition-colors"
+                      >
+                        Upload from Local instead
+                      </button>
+                    }
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
 
             {/* 6. Submit Button */}
             <button

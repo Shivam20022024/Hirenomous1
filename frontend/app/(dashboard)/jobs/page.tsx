@@ -131,42 +131,31 @@ export default function JobsPage() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredJobs.length > 0 ? filteredJobs.map(job => (
           <article key={job.id} className="job-card">
-            <div>
-              <div className="flex items-start justify-between">
-                <h2 className="text-lg font-bold text-foreground">{job.title}</h2>
-                <div className="flex gap-1">
+            <div className="flex-1">
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="line-clamp-2 min-h-[3.5rem] min-w-0 text-lg font-bold leading-tight text-foreground">{job.title}</h2>
+                <div className="flex shrink-0 gap-1">
                   <button onClick={() => openModal(job)} className="p-1.5 text-muted-foreground hover:bg-muted rounded-md"><Edit2 size={14}/></button>
                   <button onClick={() => handleDelete(job.id)} className="p-1.5 text-destructive hover:bg-destructive/10 rounded-md"><Trash2 size={14}/></button>
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <div className="mt-4 flex min-h-[1.25rem] flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                 {job.location && <span className="flex items-center gap-1"><MapPin size={12}/>{job.location}</span>}
                 {job.jobType && <span className="flex items-center gap-1"><Briefcase size={12}/>{job.jobType}</span>}
                 {job.experience && <span className="flex items-center gap-1"><Clock size={12}/>{job.experience}</span>}
               </div>
-              <p className="mt-4 line-clamp-3 text-sm text-muted-foreground">{job.description}</p>
+              <p className="mt-4 line-clamp-3 min-h-[3.9rem] text-sm text-muted-foreground">{job.description}</p>
 
-              <div className="mt-4 flex flex-wrap gap-1">
+              <div className="mt-4 flex h-7 items-center gap-1.5 overflow-hidden">
                 {job.skills?.slice(0, 4).map((skill: string) => (
-                  <span key={skill} className="rounded-md bg-muted px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{skill}</span>
+                  <span key={skill} className="inline-block max-w-[150px] shrink-0 truncate rounded-md bg-muted px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{skill}</span>
                 ))}
-                {job.skills?.length > 4 && <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">+{job.skills.length - 4}</span>}
+                {job.skills?.length > 4 && <span className="inline-block shrink-0 rounded-md bg-muted px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">+{job.skills.length - 4}</span>}
               </div>
             </div>
             <div className="mt-6 border-t border-border pt-4">
-              <div className="text-xs text-muted-foreground mb-3">
+              <div className="text-xs text-muted-foreground">
                 Posted on {new Date(job.createdAt).toLocaleDateString()}
-              </div>
-              <div className="flex gap-1.5">
-                <button onClick={() => alert("LinkedIn integration coming soon!")} className="flex-1 rounded border border-[#0a66c2]/30 bg-[#0a66c2]/5 py-1.5 text-[10px] font-semibold text-[#0a66c2] hover:bg-[#0a66c2]/15 transition-colors text-center whitespace-nowrap">
-                  + LinkedIn
-                </button>
-                <button onClick={() => alert("Naukri integration coming soon!")} className="flex-1 rounded border border-[#275df5]/30 bg-[#275df5]/5 py-1.5 text-[10px] font-semibold text-[#275df5] hover:bg-[#275df5]/15 transition-colors text-center whitespace-nowrap">
-                  + Naukri
-                </button>
-                <button onClick={() => alert("SharePoint integration coming soon!")} className="flex-1 rounded border border-[#03787c]/30 bg-[#03787c]/5 py-1.5 text-[10px] font-semibold text-[#03787c] hover:bg-[#03787c]/15 transition-colors text-center whitespace-nowrap">
-                  + SharePoint
-                </button>
               </div>
             </div>
           </article>

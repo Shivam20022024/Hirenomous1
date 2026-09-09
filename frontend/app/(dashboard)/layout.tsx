@@ -8,6 +8,8 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import {
   BarChart3,
   ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   Menu,
   X,
   UsersRound,
@@ -33,46 +35,62 @@ const navigation = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="fixed inset-0 flex overflow-hidden bg-background">
       {/* Sidebar */}
-      <aside className={`${menuOpen ? 'flex' : 'hidden'} fixed inset-y-0 left-0 z-40 w-64 flex-col border-r border-sidebar-border bg-sidebar lg:static lg:flex`}>
-        <div className="flex h-20 items-center justify-between border-b border-sidebar-border px-6">
+      <aside
+        className={`app-surface ${menuOpen ? 'flex' : 'hidden'} fixed inset-y-0 left-0 z-40 w-64 flex-col border-r border-sidebar-border lg:relative lg:flex ${collapsed ? 'lg:w-[76px]' : 'lg:w-64'}`}
+      >
+        <div className={`flex h-20 items-center border-b border-sidebar-border ${collapsed ? 'lg:justify-center lg:px-2' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
-            <div className="brand-mark !h-9 !w-9 text-lg">H</div>
-            <span className="text-lg font-bold tracking-tight text-sidebar-foreground">Hireonomous</span>
+            <div className="brand-mark !h-9 !w-9 shrink-0 text-lg">H</div>
+            <span className={`text-lg font-bold tracking-tight text-sidebar-foreground ${collapsed ? 'lg:hidden' : ''}`}>Hireonomous</span>
           </div>
           <button onClick={() => setMenuOpen(false)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted lg:hidden" aria-label="Close navigation">
             <X size={18}/>
           </button>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="hidden lg:absolute lg:-right-3 lg:top-7 lg:flex lg:h-7 lg:w-7 lg:items-center lg:justify-center lg:rounded-full lg:border lg:border-sidebar-border lg:bg-card lg:text-muted-foreground lg:shadow-sm lg:transition-colors lg:hover:bg-muted lg:hover:text-foreground"
+            aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          >
+            {collapsed ? <ChevronsRight size={15}/> : <ChevronsLeft size={15}/>}
+          </button>
         </div>
-        <nav className="flex-1 space-y-1 px-3 py-7 overflow-y-auto" aria-label="Main navigation">
+        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-7" aria-label="Main navigation">
           {navigation.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
-              <Link key={item.name} href={item.href} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
-                <item.icon size={17} strokeWidth={2.25} />
-                <span>{item.name}</span>
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setCollapsed(false)}
+                title={collapsed ? item.name : undefined}
+                className={`flex w-full items-center gap-3 rounded-lg py-2.5 text-sm font-semibold transition-colors ${collapsed ? 'lg:justify-center lg:px-0' : 'px-3'} ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+              >
+                <item.icon size={17} strokeWidth={2.25} className="shrink-0" />
+                <span className={collapsed ? 'lg:sr-only' : ''}>{item.name}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-sidebar-border p-5">
-          <div className="flex items-center gap-3 relative">
-            <div className="avatar avatar-blue">
+        <div className={`border-t border-sidebar-border p-5 ${collapsed ? 'lg:p-3' : ''}`}>
+          <div className={`flex items-center gap-3 relative ${collapsed ? 'lg:flex-col lg:gap-2' : ''}`}>
+            <div className="avatar avatar-blue shrink-0">
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <div className="min-w-0 flex-1">
+            <div className={`min-w-0 flex-1 ${collapsed ? 'lg:hidden' : ''}`}>
               <p className="truncate text-sm font-semibold text-sidebar-foreground">{user?.name || 'User'}</p>
               <p className="truncate text-xs text-muted-foreground">{user?.email || 'user@example.com'}</p>
             </div>
-            <button onClick={() => setDropdownOpen(!dropdownOpen)}>
-               <ChevronDown className="ml-auto text-muted-foreground hover:text-foreground cursor-pointer" size={16}/>
+            <button onClick={() => setDropdownOpen(!dropdownOpen)} aria-label="Account menu">
+               <ChevronDown className={`text-muted-foreground hover:text-foreground cursor-pointer ${collapsed ? '' : 'ml-auto'}`} size={16}/>
             </button>
 
             {dropdownOpen && (
@@ -90,7 +108,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <div className="min-w-0 flex-1 flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-border bg-card/95 px-5 backdrop-blur lg:px-10">
+        <header className="app-surface sticky top-0 z-20 flex h-20 items-center justify-between border-b border-border px-5 backdrop-blur lg:px-10">
           <button onClick={() => setMenuOpen(true)} className="rounded-lg border border-border p-2 text-muted-foreground hover:bg-muted lg:hidden" aria-label="Open navigation">
             <Menu size={20}/>
           </button>
@@ -108,7 +126,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="app-surface min-h-0 flex-1 overflow-y-auto">
           {children}
         </main>
       </div>
