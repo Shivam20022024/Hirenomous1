@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { BrandLogo } from '@/components/brand-logo';
 import {
   BarChart3,
   ChevronDown,
@@ -49,7 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       >
         <div className={`flex h-20 items-center border-b border-sidebar-border ${collapsed ? 'lg:justify-center lg:px-2' : 'justify-between px-6'}`}>
           <div className="flex items-center gap-3">
-            <div className="brand-mark !h-9 !w-9 shrink-0 text-lg">H</div>
+            <BrandLogo className="h-9 w-9 shrink-0" />
             <span className={`text-lg font-bold tracking-tight text-sidebar-foreground ${collapsed ? 'lg:hidden' : ''}`}>Hireonomous</span>
           </div>
           <button onClick={() => setMenuOpen(false)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted lg:hidden" aria-label="Close navigation">
@@ -114,7 +114,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
           <div className="hidden lg:block"/>
           <div className="flex items-center gap-3">
-            <ThemeToggle />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-foreground">{user?.name || 'User'}</p>
               <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{user?.organization_name || 'Admin'}</p>

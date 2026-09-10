@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { Reveal } from '@/components/reveal';
+import { BrandLogo } from '@/components/brand-logo';
 
 function FeatureCard({ children }: { children: React.ReactNode }) {
   return (
@@ -236,7 +237,7 @@ export default function RootPage() {
 
         <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/15 text-sm font-bold text-primary-foreground">H</div>
+            <BrandLogo className="h-8 w-8 shrink-0" />
             <span className="text-base font-bold tracking-tight text-primary-foreground">Hireonomous</span>
           </div>
           <div className="flex items-center gap-2">

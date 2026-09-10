@@ -132,7 +132,7 @@ export default function AIRecruiterPage() {
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-3xl font-bold tracking-[-0.06em]">AI Hiring Assistant</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Configure the AI voice agent for automated initial screening.</p>
+          <p className="mt-2 text-base font-semibold text-foreground">Configure the AI voice agent for automated initial screening.</p>
         </div>
         <div className="flex gap-2">
           <select value={jobId} onChange={e => setJobId(e.target.value)} className="h-11 rounded-xl border border-border bg-card px-4 text-sm font-medium outline-none">

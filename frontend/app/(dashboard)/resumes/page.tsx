@@ -208,7 +208,7 @@ export default function ResumesPage() {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Candidate Profiles</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Upload, parse, and organize candidate resumes in one place.</p>
+          <p className="mt-2 text-base font-semibold text-foreground">Upload, parse, and organize candidate resumes in one place.</p>
         </div>
         {jobs.length > 0 && (
           <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 shadow-sm">
@@ -249,7 +249,7 @@ export default function ResumesPage() {
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                   <div className="mb-4">
                     <h2 className="text-base font-semibold text-foreground">Match resumes to a job</h2>
-                    <p className="text-xs text-muted-foreground mt-1">Select an active job to parse resumes against its requirements.</p>
+                    <p className="text-sm font-semibold text-foreground mt-1">Select an active job to parse resumes against its requirements.</p>
                   </div>
                   
                   <select 
@@ -290,7 +290,7 @@ export default function ResumesPage() {
                   <div className="mb-4 flex items-center justify-between">
                     <div>
                       <h2 className="text-base font-semibold text-foreground">AI Matching</h2>
-                      <p className="text-xs text-muted-foreground mt-1">Use the selected job description to evaluate resume relevance.</p>
+                      <p className="text-sm font-semibold text-foreground mt-1">Use the selected job description to evaluate resume relevance.</p>
                     </div>
                   </div>
 
@@ -317,7 +317,7 @@ export default function ResumesPage() {
                     </div>
                     <div className="flex flex-col">
                       <label htmlFor="skipAi" className="text-sm font-semibold text-foreground cursor-pointer select-none">Skip AI Analysis</label>
-                      <span className="text-xs text-muted-foreground mt-0.5">Resume will be parsed without scoring or AI matching.</span>
+                      <span className="text-sm font-semibold text-foreground mt-0.5">Resume will be parsed without scoring or AI matching.</span>
                     </div>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default function ResumesPage() {
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex-1 flex flex-col">
                   <div className="mb-4">
                     <h2 className="text-base font-semibold text-foreground">Upload Resumes</h2>
-                    <p className="text-xs text-muted-foreground mt-1">Add candidate resumes from your computer, or import from a connected source.</p>
+                    <p className="text-sm font-semibold text-foreground mt-1">Add candidate resumes from your computer, or import from a connected source.</p>
                   </div>
 
                   {/* 5. Trigger — opens the upload dialog */}
@@ -341,7 +341,7 @@ export default function ResumesPage() {
                       <Upload className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground">Upload Resume</h3>
-                    <p className="mt-1 max-w-xs text-xs text-muted-foreground">Choose a file from your computer, or import from LinkedIn, SharePoint, Naukri, or Google Drive</p>
+                    <p className="mt-1 max-w-xs text-sm font-semibold text-foreground">Choose a file from your computer, or import from LinkedIn, SharePoint, Naukri, or Google Drive</p>
                   </button>
 
                   {/* Selected files / links */}
@@ -469,7 +469,7 @@ export default function ResumesPage() {
                       <Link2 className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground">Import from Google Drive</h3>
-                    <p className="mt-1 text-xs text-muted-foreground">Paste a shareable link to a resume file, or an entire folder. Sharing must be set to "Anyone with the link can view".</p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">Paste a shareable link to a resume file, or an entire folder. Sharing must be set to "Anyone with the link can view".</p>
 
                     <div className="mt-6 flex w-full items-center gap-2">
                       <input
@@ -528,7 +528,7 @@ export default function ResumesPage() {
             {/* 7. Manual Entry (Cleaned up) */}
             <div className="mb-8 border-b border-border pb-5">
               <h2 className="text-lg font-bold text-foreground">Manual Candidate Entry</h2>
-              <p className="text-sm text-muted-foreground mt-1">Add a candidate's details directly into the database.</p>
+              <p className="text-base font-semibold text-foreground mt-1">Add a candidate's details directly into the database.</p>
             </div>
             <form onSubmit={handleManualSubmit} className="space-y-6">
               <div className="grid gap-6 sm:grid-cols-2">

@@ -47,7 +47,7 @@ export default function SettingsPage() {
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="border-b border-border px-6 py-5 bg-muted/30">
                 <h2 className="text-lg font-bold">Profile Details</h2>
-                <p className="text-sm text-muted-foreground">Your personal account information.</p>
+                <p className="text-base font-semibold text-foreground">Your personal account information.</p>
               </div>
               <div className="p-6 space-y-6">
                 <div className="flex items-center gap-6">
@@ -84,7 +84,7 @@ export default function SettingsPage() {
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="border-b border-border px-6 py-5 bg-muted/30">
                 <h2 className="text-lg font-bold">Organization Details</h2>
-                <p className="text-sm text-muted-foreground">Information about your workspace.</p>
+                <p className="text-base font-semibold text-foreground">Information about your workspace.</p>
               </div>
               <div className="p-6 space-y-6">
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -108,13 +108,13 @@ export default function SettingsPage() {
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="border-b border-border px-6 py-5 bg-muted/30">
                 <h2 className="text-lg font-bold">Security</h2>
-                <p className="text-sm text-muted-foreground">Manage your password and security preferences.</p>
+                <p className="text-base font-semibold text-foreground">Manage your password and security preferences.</p>
               </div>
               <div className="p-6 space-y-6">
                 <div className="flex items-center justify-between border-b border-border pb-6">
                   <div>
                     <h3 className="font-semibold flex items-center gap-2"><Key size={16} /> Password</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Change your password to keep your account secure.</p>
+                    <p className="text-base font-semibold text-foreground mt-1">Change your password to keep your account secure.</p>
                   </div>
                   <button className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold hover:bg-muted">Change Password</button>
                 </div>
@@ -122,7 +122,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold flex items-center gap-2"><Bell size={16} /> Two-Factor Authentication</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Add an extra layer of security to your account.</p>
+                    <p className="text-base font-semibold text-foreground mt-1">Add an extra layer of security to your account.</p>
                   </div>
                   <button className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold hover:bg-muted">Enable 2FA</button>
                 </div>

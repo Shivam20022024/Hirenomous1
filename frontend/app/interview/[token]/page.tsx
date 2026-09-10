@@ -302,8 +302,8 @@ export default function CandidateVideoInterviewPage() {
             <AlertCircle className="h-6 w-6 text-destructive" />
           </div>
           <h1 className="text-lg font-bold text-foreground">Interview unavailable</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{errorMsg}</p>
-          <p className="mt-4 text-xs text-muted-foreground">Please contact the recruiter who sent you this link.</p>
+          <p className="mt-2 text-base font-semibold text-foreground">{errorMsg}</p>
+          <p className="mt-4 text-sm font-semibold text-foreground">Please contact the recruiter who sent you this link.</p>
         </div>
       </Centered>
     );
@@ -317,8 +317,8 @@ export default function CandidateVideoInterviewPage() {
             <CheckCircle2 className="h-7 w-7 text-success" />
           </div>
           <h1 className="text-xl font-bold text-foreground">Interview complete</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{completeMessage}</p>
-          <p className="mt-4 text-xs text-muted-foreground">The hiring team will review your responses. You can close this tab.</p>
+          <p className="mt-2 text-base font-semibold text-foreground">{completeMessage}</p>
+          <p className="mt-4 text-sm font-semibold text-foreground">The hiring team will review your responses. You can close this tab.</p>
         </div>
       </Centered>
     );
@@ -331,7 +331,7 @@ export default function CandidateVideoInterviewPage() {
         <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-6 shadow-xl sm:p-8">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">AI Video Interview</p>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground">{session?.job_title}</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-base font-semibold text-foreground">
             {resuming
               ? `Welcome back, ${session?.candidate_first_name}. Let's continue your interview.`
               : `Hi ${session?.candidate_first_name}, let's get you set up. This is a video interview with an AI interviewer.`}
@@ -367,7 +367,7 @@ export default function CandidateVideoInterviewPage() {
               <Check label="Speaker" ok={speakerOk} />
               <Check label="Internet connection" ok={online} bad={!online} />
 
-              <div className="!mt-4 rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+              <div className="!mt-4 rounded-xl border border-border bg-muted/30 p-3 text-sm font-medium text-foreground">
                 <p className="font-semibold text-foreground">Before you start</p>
                 <ul className="mt-1.5 space-y-1">
                   <li>• Sit in a quiet, well-lit place.</li>

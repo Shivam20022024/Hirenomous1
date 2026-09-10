@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { fetchApi } from '@/lib/api';
+import { BrandLogo } from '@/components/brand-logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -47,11 +48,11 @@ export default function LoginPage() {
     <div className="app-surface flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-xl">
         <div className="text-center">
-          <div className="brand-mark mx-auto !h-12 !w-12 text-xl">H</div>
+          <BrandLogo className="mx-auto h-12 w-12" />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
             Sign in to Hireonomous
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-base font-semibold text-foreground">
             Enter your details below to access your account
           </p>
         </div>

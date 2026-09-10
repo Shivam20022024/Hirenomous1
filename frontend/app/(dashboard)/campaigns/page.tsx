@@ -222,7 +222,7 @@ export default function CampaignsPage() {
           </Button>
         </div>
         {selectedJobs.length === 0 && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm font-semibold text-foreground">
             Select one or more job postings above to enable “Call All Shortlisted”.
           </p>
         )}

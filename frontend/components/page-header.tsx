@@ -14,7 +14,7 @@ function PageHeader({ eyebrow, title, description, action, className }: PageHead
       <div className="flex flex-col gap-2">
         {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h1>
-        {description && <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>}
+        {description && <p className="max-w-2xl text-base font-semibold text-foreground">{description}</p>}
       </div>
       {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
     </div>

@@ -84,7 +84,6 @@
 * { @apply border-border outline-ring/50; }
 html { background: var(--background); }
 body { @apply bg-background text-foreground antialiased; font-family: var(--font-sans); }
-.brand-mark { display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: var(--radius-lg); background: var(--warning-surface); color: var(--foreground); font-size: 22px; line-height: 1; }
 .avatar { display: flex; width: 38px; height: 38px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 999px; background: var(--foreground); color: var(--primary-foreground); font-size: 12px; font-weight: 700; }
 .avatar-blue { background: var(--primary); color: var(--primary-foreground); }
 .job-card { display: flex; min-height: 252px; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); padding: 20px; box-shadow: 0 2px 4px color-mix(in oklab, var(--foreground) 4%, transparent); transition: border-color .2s, box-shadow .2s, transform .2s; }
@@ -131,40 +130,8 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 @layer base { :focus-visible { @apply outline-2 outline-offset-2 outline-ring; } }
 
-.dark {
-  color-scheme: dark;
-  --background: oklch(0.19 0.028 283);
-  --foreground: oklch(0.96 0.01 230);
-  --card: oklch(0.23 0.03 283);
-  --card-foreground: oklch(0.96 0.01 230);
-  --popover: oklch(0.23 0.03 283);
-  --popover-foreground: oklch(0.96 0.01 230);
-  --primary: oklch(0.66 0.11 186.4);
-  --primary-foreground: oklch(0.15 0.02 283);
-  --secondary: oklch(0.27 0.025 283);
-  --secondary-foreground: oklch(0.92 0.01 230);
-  --muted: oklch(0.25 0.022 283);
-  --muted-foreground: oklch(0.87 0.015 230);
-  --accent: oklch(0.48 0.09 194.5);
-  --accent-foreground: oklch(0.97 0.005 230);
-  --success: oklch(0.62 0.12 170);
-  --success-foreground: oklch(0.15 0.02 170);
-  --warning: oklch(0.78 0.13 81.7);
-  --warning-foreground: oklch(0.22 0.05 70);
-  --warning-surface: oklch(0.36 0.05 69.8);
-  --warning-text: oklch(0.80 0.13 81.7);
-  --destructive: oklch(0.65 0.21 25);
-  --border: oklch(0.32 0.022 283);
-  --input: oklch(0.30 0.022 283);
-  --ring: oklch(0.66 0.11 186.4);
-  --sidebar: oklch(0.21 0.03 283);
-  --sidebar-foreground: oklch(0.90 0.01 230);
-  --sidebar-border: oklch(0.28 0.022 283);
-}
-
-/* Forces the light-mode token values on a subtree regardless of the ancestor .dark class —
-   used by the marketing landing page, which does not support dark mode. Re-declaring the
-   same custom properties here wins over an inherited .dark ancestor for everything inside. */
+/* Pins the marketing landing page to its own frozen token snapshot, independent of :root —
+   so later tweaks to the app's tokens (e.g. dashboard text-contrast changes) never affect it. */
 .theme-force-light {
   color-scheme: light;
   --background: oklch(0.985 0.003 230);

@@ -257,8 +257,8 @@ export default function CandidatesPage() {
       </div>
 
       {!jobId && (
-        <p className="text-xs text-muted-foreground">
-          Select a specific job in the <span className="font-semibold">All Jobs</span> filter to enable “Invite to AI Interview” and “Email Interested” for that job’s candidates.
+        <p className="text-sm font-semibold text-foreground">
+          Select a specific job in the <span className="font-bold">All Jobs</span> filter to enable “Invite to AI Interview” and “Email Interested” for that job’s candidates.
         </p>
       )}
 

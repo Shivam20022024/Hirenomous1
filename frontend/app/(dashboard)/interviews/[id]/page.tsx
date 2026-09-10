@@ -170,12 +170,12 @@ export default function InterviewReportPage() {
       </div>
 
       {report.status !== 'completed' ? (
-        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border border-dashed border-border p-10 text-center text-base font-semibold text-foreground">
           This interview has not been completed yet, so there is no report to show.
         </div>
       ) : !evaluated ? (
         <div className="rounded-xl border border-border bg-card p-8 text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base font-semibold text-foreground">
             The interview is complete but the AI evaluation has not finished (status: {report.evaluation_status}).
           </p>
           <Button onClick={reevaluate} disabled={busy} className="mt-4">
