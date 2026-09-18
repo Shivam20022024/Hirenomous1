@@ -13,7 +13,7 @@ async def main():
     
     # Update the user
     result = await db.users.update_one(
-        {"name": "shubam kumar"},
+        {"name": {"$regex": "shivam", "$options": "i"}},
         {"$set": {"organization_name": "Hireonomous"}}
     )
     
@@ -22,8 +22,8 @@ async def main():
     elif result.matched_count > 0:
         print("User found, but company name was already Hireonomous.")
     else:
-        # Try finding by lowercase or similar if exact match fails
-        user = await db.users.find_one({"name": {"$regex": "shubam", "$options": "i"}})
+        # Try finding by email
+        user = await db.users.find_one({"email": "yash.raj@novalantis.com"})
         if user:
             print(f"Found user with similar name: {user.get('name')}")
             res = await db.users.update_one({"_id": user["_id"]}, {"$set": {"organization_name": "Hireonomous"}})
