@@ -29,6 +29,12 @@ INTRO_QUESTION = {
     "target_skills": [],
 }
 
+L2_INTRO_QUESTION = {
+    "text": "Welcome back. In this second round, we will dive deeper into advanced technical topics and system design.",
+    "question_type": "introduction",
+    "target_skills": [],
+}
+
 # Applied to every interview / evaluation prompt.
 FAIRNESS_RULES = (
     "Evaluate ONLY job-relevant professional competencies (technical knowledge, problem solving, "
@@ -141,16 +147,66 @@ def _fallback_question_plan(job: Optional[dict], count: int) -> List[Dict[str, A
     return base[:max(3, count)]
 
 
-async def generate_question_plan(job: Optional[dict], candidate: dict, count: int) -> List[Dict[str, Any]]:
+def _l2_fallback_question_plan(job: Optional[dict], count: int) -> List[Dict[str, Any]]:
+    title = (job or {}).get("title") or "this role"
+    skills = ((job or {}).get("skills") or [])[:4]
+    base = [
+        dict(L2_INTRO_QUESTION),
+        {"text": "Walk me through the architecture of the most complex system you've designed or scaled.",
+         "question_type": "scenario", "target_skills": []},
+        {"text": f"How would you approach designing a fault-tolerant system using {', '.join(skills) if skills else 'standard patterns'}?",
+         "question_type": "technical", "target_skills": skills},
+        {"text": "Describe a scenario where you had to debug a critical production failure under pressure.",
+         "question_type": "problem_solving", "target_skills": []},
+        {"text": "What strategies do you use for optimizing performance in a high-traffic environment?",
+         "question_type": "technical", "target_skills": skills},
+        {"text": "How do you ensure data consistency and handle race conditions in distributed systems?",
+         "question_type": "technical", "target_skills": []},
+        {"text": "Do you have any final questions or thoughts regarding the deeper technical aspects of this role?",
+         "question_type": "closing", "target_skills": []},
+    ]
+    return base[:max(3, count)]
+
+
+async def generate_question_plan(job: Optional[dict], candidate: dict, count: int, interview_type: str = "ai_technical") -> List[Dict[str, Any]]:
     count = max(3, min(count, 15))
-    # Question 1 is always the fixed "tell me about yourself"; the LLM fills the rest.
     remaining = count - 1
+    
+    is_l2 = interview_type == "ai_l2_technical"
+    intro_q = L2_INTRO_QUESTION if is_l2 else INTRO_QUESTION
+    
     system = (
         "You are an experienced technical interviewer designing a structured, job-specific interview. "
         + FAIRNESS_RULES
         + " Questions must be answerable verbally in 1-3 minutes each. Do NOT ask for code to be written."
     )
-    user = f"""
+    
+    if is_l2:
+        user = f"""
+Design {remaining} advanced interview questions for this candidate and job for a second-round (L2) interview.
+
+JOB
+{job_context(job)}
+
+CANDIDATE (resume, PII removed)
+{safe_resume_context(candidate)}
+
+Requirements:
+- This is a deep-dive L2 round. Do NOT ask basic introductory questions or "tell me about yourself".
+- Focus heavily on system design, architecture, advanced problem solving, and complex scenarios.
+- Ground the questions in the REQUIRED SKILLS above and the candidate's actual resume experience.
+- Vary question_type across: technical, scenario, problem_solving, closing.
+- Last question: a natural closing question.
+
+Return STRICT JSON:
+{{
+  "questions": [
+    {{"text": "...", "question_type": "technical", "target_skills": ["skill", ...]}}
+  ]
+}}
+"""
+    else:
+        user = f"""
 Design {remaining} interview questions for this candidate and job.
 
 JOB
@@ -179,7 +235,7 @@ Return STRICT JSON:
     try:
         data = await _chat_json(system, user, temperature=0.4)
         raw = data.get("questions") or []
-        plan: List[Dict[str, Any]] = [dict(INTRO_QUESTION)]
+        plan: List[Dict[str, Any]] = [dict(intro_q)]
         for q in raw[:remaining]:
             text = str(q.get("text", "")).strip()
             if not text:
@@ -194,7 +250,8 @@ Return STRICT JSON:
         logger.warning("Question plan too short from LLM; using fallback.")
     except Exception as exc:
         logger.error(f"generate_question_plan failed: {exc}")
-    return _fallback_question_plan(job, count)
+    
+    return _l2_fallback_question_plan(job, count) if is_l2 else _fallback_question_plan(job, count)
 
 
 # --------------------------------------------------------------------------

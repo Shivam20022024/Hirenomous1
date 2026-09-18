@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -29,7 +29,8 @@ const navigation = [
   { name: 'Candidate Profiles', href: '/resumes', icon: FileText },
   { name: 'AI Hiring Assistant', href: '/ai-recruiter', icon: Bot },
   { name: 'Calling Campaigns', href: '/campaigns', icon: Phone },
-  { name: 'AI Interviews', href: '/interviews', icon: ClipboardCheck },
+  { name: 'L1 Interviews', href: '/interviews', icon: ClipboardCheck },
+  { name: 'L2 Interviews', href: '/l2-interviews', icon: ClipboardCheck },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];

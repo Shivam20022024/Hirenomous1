@@ -158,17 +158,35 @@ class EmailService:
         interview_url: str,
         expected_minutes: str = "20-30",
         company_name: str = settings.APP_NAME,
+        interview_type: str = "ai_technical",
     ) -> tuple[str, str]:
         """Dedicated AI Interview invitation email. Independent of the
         shortlist / selection email — creating an interview must never send that."""
         candidate_name = candidate.get("name", "Candidate")
         role_display = job_title or "the open position"
-        subject = f"AI Interview Invitation - {role_display}"
+        
+        is_l2 = interview_type == "ai_l2_technical"
+        round_name = "Second Round (L2) AI Interview" if is_l2 else "AI Interview"
+        
+        subject = f"{round_name} Invitation - {role_display}"
+        
+        if is_l2:
+            intro_text = (
+                "Congratulations on passing the first round! We were impressed by your background "
+                "and would like to invite you to a second-round (L2) AI-powered video interview.\n\n"
+                "This round will be a deeper dive into system design, advanced technical problem-solving, "
+                "and practical scenarios related to the role."
+            )
+        else:
+            intro_text = (
+                "You have been invited to complete an AI-powered video interview. It will assess your "
+                "technical knowledge, problem solving, role-specific skills and communication."
+            )
+
         body = (
             f"Hi {candidate_name},\n\n"
             f"Thank you for your interest in the {role_display} position.\n\n"
-            "You have been invited to complete an AI-powered video interview. It will assess your "
-            "technical knowledge, problem solving, role-specific skills and communication.\n\n"
+            f"{intro_text}\n\n"
             f"Interview duration:\nApproximately {expected_minutes} minutes.\n\n"
             f"Interview link:\n{interview_url}\n\n"
             "Before you begin:\n"

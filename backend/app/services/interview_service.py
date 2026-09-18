@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 RUBRIC_VERSION = "interview-rubric-v1"
 # Candidate statuses from which an AI interview may be created (business rule #1).
-INVITABLE_CANDIDATE_STATUSES = {"interested", "interview", "interview_completed"}
+INVITABLE_CANDIDATE_STATUSES = {"interested", "interview", "interview_completed", "selected"}
 
 
 # ======================================================================
@@ -188,7 +188,7 @@ class InterviewService:
 
         # Generate the reproducible question plan.
         count = question_count or settings.INTERVIEW_QUESTION_COUNT
-        raw_plan = await ipe.generate_question_plan(job, candidate, count)
+        raw_plan = await ipe.generate_question_plan(job, candidate, count, interview_type)
         question_plan = [
             InterviewQuestion(
                 text=q["text"],
@@ -283,7 +283,7 @@ class InterviewService:
         else:
             try:
                 subject, body = EmailService.build_interview_invite_email(
-                    candidate, job_title, interview_url, company_name=company_name
+                    candidate, job_title, interview_url, company_name=company_name, interview_type=interview_doc.get("interview_type", "ai_technical")
                 )
                 await run_in_threadpool(
                     lambda: EmailService.send_email(email, subject, body, **sender)
@@ -452,7 +452,7 @@ class InterviewService:
     # Recruiter: read
     # ------------------------------------------------------------------
     @staticmethod
-    async def list_interviews(*, org_id: str, job_id=None, status=None, recommendation=None) -> List[dict]:
+    async def list_interviews(*, org_id: str, job_id=None, status=None, recommendation=None, interview_type=None) -> List[dict]:
         db = get_db()
         query: Dict[str, Any] = {"organization_id": org_id}
         if job_id:
@@ -461,6 +461,8 @@ class InterviewService:
             query["status"] = status
         if recommendation:
             query["recommendation"] = recommendation
+        if interview_type:
+            query["interview_type"] = interview_type
 
         projection = {
             "_id": 0, "token_hash": 0, "transcript": 0, "answers": 0,

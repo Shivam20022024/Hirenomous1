@@ -61,10 +61,11 @@ async def list_interviews(
     job_id: Optional[str] = None,
     status: Optional[str] = None,
     recommendation: Optional[str] = None,
+    interview_type: Optional[str] = None,
     org_id: str = Depends(get_context_organization_id),
 ):
     return await InterviewService.list_interviews(
-        org_id=org_id, job_id=job_id, status=status, recommendation=recommendation
+        org_id=org_id, job_id=job_id, status=status, recommendation=recommendation, interview_type=interview_type
     )
 
 

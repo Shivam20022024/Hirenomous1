@@ -39,7 +39,7 @@ export default function InterviewsPage() {
       if (jobFilter) qs.set('job_id', jobFilter);
       if (statusFilter) qs.set('status', statusFilter);
       if (recFilter) qs.set('recommendation', recFilter);
-      qs.set('interview_type', 'ai_technical');
+      qs.set('interview_type', 'ai_l2_technical');
       const [rows, jobsData] = await Promise.all([
         fetchApi(`/interviews?${qs}`),
         fetchApi('/jobs'),
@@ -140,8 +140,8 @@ export default function InterviewsPage() {
     <div className="mx-auto max-w-[1240px] space-y-6 px-5 py-9 lg:px-8 lg:py-14">
       <PageHeader
         eyebrow="Assessments"
-        title="L1 Interviews"
-        description="Invite interested candidates to an L1 interview, review the AI report, and make the final decision."
+        title="L2 AI Interviews"
+        description="Review deep-dive system design and advanced technical interviews."
       />
 
       <div className="flex flex-wrap gap-2">

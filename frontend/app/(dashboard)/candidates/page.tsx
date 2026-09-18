@@ -162,6 +162,35 @@ export default function CandidatesPage() {
     }
   };
 
+  const handleInviteL2Interview = async (candidate: any) => {
+    if (!confirm(`Invite ${candidate.name} to an L2 System Design interview?`)) return;
+    setActionLoading(true);
+    try {
+      const res = await fetchApi('/interviews', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          candidate_id: candidate.candidate_id, 
+          job_id: candidate.job_id || null,
+          interview_type: 'ai_l2_technical'
+        }),
+      });
+      const iid = res?.interview?.id;
+      if (res?.created === false) {
+        alert('This candidate already has an active AI interview — no new invite was sent.');
+      } else if (res?.invite?.sent) {
+        alert('L2 AI interview created and invitation email sent.');
+      } else {
+        alert(`L2 AI interview created. Invitation email not sent (${res?.invite?.reason || 'no email / SMTP not configured'}). Link: ${res?.interview_url || 'n/a'}`);
+      }
+      await loadData();
+      if (iid) router.push(`/interviews/${iid}`);
+    } catch (err: any) {
+      alert(`Failed to create L2 interview: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleInterviewDecision = async (candidate: any, decision: 'select' | 'reject') => {
     if (!candidate.latest_interview_id) {
       alert('No interview found for this candidate.');
@@ -406,6 +435,9 @@ export default function CandidatesPage() {
                       <>
                         <Button size="sm" variant="outline" onClick={() => router.push(`/interviews/${selectedCandidate.latest_interview_id}`)}>
                           <FileText size={13} /> View AI Report
+                        </Button>
+                        <Button size="sm" variant="secondary" onClick={() => handleInviteL2Interview(selectedCandidate)} disabled={actionLoading}>
+                          <ClipboardCheck size={13} /> Invite to L2 Interview
                         </Button>
                         <Button size="sm" variant="success" onClick={() => handleInterviewDecision(selectedCandidate, 'select')} disabled={actionLoading}>
                           <Check size={13} /> Select Candidate

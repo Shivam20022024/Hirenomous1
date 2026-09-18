@@ -27,9 +27,18 @@ _FOCUS_LOSS_MS = 4000     # per interview, "meaningfully away from the tab"
 _LATENCY_MS = 12000       # a pause this long before answering is notable
 
 
-def _level(score: int, flags: List[dict]) -> str:
+def _level(score: int, flags: List[dict], is_l2: bool = False) -> str:
     highs = sum(1 for f in flags if f["severity"] == "high")
     serious = sum(1 for f in flags if f["severity"] in ("high", "medium"))
+    
+    if is_l2:
+        # Zero tolerance in L2: any single high flag or multiple serious flags = high risk
+        if score >= 40 or highs >= 1 or serious >= 2:
+            return "high_risk"
+        if serious >= 1 or score >= 10:
+            return "review"
+        return "clean"
+        
     if score >= 55 or (highs >= 1 and serious >= 2):
         return "high_risk"
     if serious >= 1 or score >= 20:
@@ -42,6 +51,7 @@ def _flag(code: str, severity: str, title: str, detail: str) -> dict:
 
 
 async def analyze(interview: dict, *, run_llm: bool = True) -> Dict[str, Any]:
+    is_l2 = interview.get("interview_type") == "ai_l2_technical"
     answers = interview.get("answers") or []
     meta = interview.get("session_meta") or []
     flags: List[dict] = []
@@ -109,8 +119,13 @@ async def analyze(interview: dict, *, run_llm: bool = True) -> Dict[str, Any]:
         if a.get("typed_only") or (not a.get("audio_ref") and not a.get("video_ref") and a.get("answer_text"))
     )
 
-    if focus_events and focus_ms >= _FOCUS_LOSS_MS:
-        sev = "high" if (focus_ms >= 20000 or focus_events >= 5) else "medium"
+    focus_threshold = 2000 if is_l2 else _FOCUS_LOSS_MS
+    if focus_events and focus_ms >= focus_threshold:
+        if is_l2:
+            sev = "high" if (focus_ms >= 10000 or focus_events >= 2) else "medium"
+        else:
+            sev = "high" if (focus_ms >= 20000 or focus_events >= 5) else "medium"
+            
         flags.append(_flag(
             "tab_switching", sev, "Left the interview tab while answering",
             f"Switched away {focus_events}× for about {round(focus_ms / 1000)}s total during answers — "
@@ -118,22 +133,25 @@ async def analyze(interview: dict, *, run_llm: bool = True) -> Dict[str, Any]:
         ))
     if pastes:
         flags.append(_flag(
-            "paste", "medium", "Pasted text during the interview",
+            "paste", "high" if is_l2 else "medium", "Pasted text during the interview",
             f"{pastes} paste event(s) were detected on the interview page.",
         ))
     if fs_exits:
         flags.append(_flag(
-            "fullscreen_exit", "low", "Exited full screen",
+            "fullscreen_exit", "medium" if is_l2 else "low", "Exited full screen",
             f"Left full-screen mode {fs_exits}× during the interview.",
         ))
-    if long_pauses >= 2:
+        
+    latency_threshold = 2 if is_l2 else 3
+    if long_pauses >= (1 if is_l2 else 2):
         flags.append(_flag(
-            "answer_latency", "medium" if long_pauses >= 3 else "low", "Long pauses before answering",
+            "answer_latency", "high" if (is_l2 and long_pauses >= latency_threshold) else ("medium" if long_pauses >= latency_threshold else "low"), "Long pauses before answering",
             f"{long_pauses} answers began only after a pause of 12s or more.",
         ))
-    if typed and answers and typed >= max(1, len(answers) // 2):
+        
+    if typed and answers and typed >= max(1, len(answers) // (3 if is_l2 else 2)):
         flags.append(_flag(
-            "typed_answers", "low", "Answers typed, not spoken",
+            "typed_answers", "medium" if is_l2 else "low", "Answers typed, not spoken",
             f"{typed} of {len(answers)} answers were submitted as text — there is no audio to verify the speaker.",
         ))
 
@@ -177,7 +195,7 @@ async def analyze(interview: dict, *, run_llm: bool = True) -> Dict[str, Any]:
     score = min(100, sum(_SEV_WEIGHT.get(f["severity"], 0) for f in flags))
     return {
         "score": score,
-        "level": _level(score, flags),
+        "level": _level(score, flags, is_l2=is_l2),
         "flags": flags,
         "signals": {
             "distinct_ips": ips,
