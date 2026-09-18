@@ -225,7 +225,7 @@ export default function InterviewsPage() {
                 <TableCell>
                   <div className="flex items-center justify-end gap-1">
                     <Link
-                      href={`/interviews/${iv.id}`}
+                      href={`/l2-interviews/${iv.id}`}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"
                       title="View report"
                     >

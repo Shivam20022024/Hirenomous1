@@ -228,14 +228,19 @@ class InterviewService:
 
         await db.interviews.insert_one(doc)
 
-        # Inviting moves the candidate into the interview stage — it does NOT select them.
+        update_fields = {
+            "last_interaction": datetime.utcnow(),
+        }
+        if interview_type == "ai_l2_technical":
+            update_fields["l2_interview_id"] = interview.id
+            update_fields["l2_status"] = "interview"
+        else:
+            update_fields["status"] = "interview"
+            update_fields["latest_interview_id"] = interview.id
+
         await db.candidates.update_one(
             {"id": candidate_id, "organization_id": org_id},
-            {"$set": {
-                "status": "interview",
-                "latest_interview_id": interview.id,
-                "last_interaction": datetime.utcnow(),
-            }},
+            {"$set": update_fields},
         )
 
         await AuditService.record(
@@ -1023,10 +1028,16 @@ class InterviewService:
             actor_type="candidate", candidate_id=interview["candidate_id"], job_id=interview.get("job_id"),
             interview_id=interview["id"], payload={"duration_seconds": duration},
         )
-        await db.candidates.update_one(
-            {"id": interview["candidate_id"], "organization_id": interview["organization_id"], "status": "interview"},
-            {"$set": {"status": "interview_completed", "last_interaction": now}},
-        )
+        if interview.get("interview_type") == "ai_l2_technical":
+            await db.candidates.update_one(
+                {"id": interview["candidate_id"], "organization_id": interview["organization_id"]},
+                {"$set": {"l2_status": "interview_completed", "last_interaction": now}},
+            )
+        else:
+            await db.candidates.update_one(
+                {"id": interview["candidate_id"], "organization_id": interview["organization_id"], "status": "interview"},
+                {"$set": {"status": "interview_completed", "last_interaction": now}},
+            )
 
         # Evaluate in the background — never block the candidate's completion response.
         asyncio.create_task(InterviewService.evaluate(interview["id"]))

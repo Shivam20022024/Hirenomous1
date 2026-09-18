@@ -427,18 +427,20 @@ export default function CandidatesPage() {
 
                     {selectedCandidate.latest_interview_id && String(selectedCandidate.status).toLowerCase() === 'interview' && (
                       <Button size="sm" variant="outline" onClick={() => router.push(`/interviews/${selectedCandidate.latest_interview_id}`)}>
-                        <Eye size={13} /> View Interview
+                        <Eye size={13} /> View L1 Interview
                       </Button>
                     )}
 
                     {selectedCandidate.latest_interview_id && String(selectedCandidate.status).toLowerCase() === 'interview_completed' && (
                       <>
                         <Button size="sm" variant="outline" onClick={() => router.push(`/interviews/${selectedCandidate.latest_interview_id}`)}>
-                          <FileText size={13} /> View AI Report
+                          <FileText size={13} /> View L1 Report
                         </Button>
-                        <Button size="sm" variant="secondary" onClick={() => handleInviteL2Interview(selectedCandidate)} disabled={actionLoading}>
-                          <ClipboardCheck size={13} /> Invite to L2 Interview
-                        </Button>
+                        {!selectedCandidate.l2_interview_id && (
+                          <Button size="sm" variant="secondary" onClick={() => handleInviteL2Interview(selectedCandidate)} disabled={actionLoading}>
+                            <ClipboardCheck size={13} /> Invite to L2 Interview
+                          </Button>
+                        )}
                         <Button size="sm" variant="success" onClick={() => handleInterviewDecision(selectedCandidate, 'select')} disabled={actionLoading}>
                           <Check size={13} /> Select Candidate
                         </Button>
@@ -446,6 +448,18 @@ export default function CandidatesPage() {
                           <X size={13} /> Reject Candidate
                         </Button>
                       </>
+                    )}
+                    
+                    {selectedCandidate.l2_interview_id && String(selectedCandidate.l2_status).toLowerCase() === 'interview' && (
+                      <Button size="sm" variant="outline" onClick={() => router.push(`/l2-interviews/${selectedCandidate.l2_interview_id}`)}>
+                        <Eye size={13} /> View L2 Interview
+                      </Button>
+                    )}
+                    
+                    {selectedCandidate.l2_interview_id && String(selectedCandidate.l2_status).toLowerCase() === 'interview_completed' && (
+                      <Button size="sm" variant="outline" onClick={() => router.push(`/l2-interviews/${selectedCandidate.l2_interview_id}`)}>
+                        <FileText size={13} /> View L2 Report
+                      </Button>
                     )}
 
                     {['selected', 'rejected'].includes(String(selectedCandidate.status).toLowerCase()) && selectedCandidate.latest_interview_id && (

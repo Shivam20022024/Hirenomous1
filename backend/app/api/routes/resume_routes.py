@@ -81,6 +81,8 @@ def format_candidate_response(c: dict):
         "recording_url": c.get("recording_url"),
         "interview_date": c.get("interview_date"),
         "latest_interview_id": c.get("latest_interview_id"),
+        "l2_interview_id": c.get("l2_interview_id"),
+        "l2_status": c.get("l2_status"),
     }
 
 
